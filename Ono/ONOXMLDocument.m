@@ -215,8 +215,15 @@ static BOOL ONOXMLNodeMatchesTagInNamespace(xmlNodePtr node, NSString *tag, NSSt
 + (instancetype)XMLDocumentWithData:(NSData *)data
                               error:(NSError * __autoreleasing *)error
 {
-    xmlDocPtr document = xmlReadMemory([data bytes], (int)[data length], "", nil, XML_PARSE_RECOVER);
+    xmlDocPtr document = xmlReadMemory([data bytes], (int)[data length], "", nil, 0);
     if (!document) {
+        if (error) {
+            NSDictionary * userInfo = @{
+                                        NSLocalizedDescriptionKey: NSLocalizedString(@"Unable to parse XML document", @"ONOError")
+                                        };
+            *error = [NSError errorWithDomain:@"ONOXML" code:0 userInfo:userInfo];
+        }
+
         return nil;
     }
 
